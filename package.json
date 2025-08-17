@@ -1,0 +1,18 @@
+{
+  "name": "yt-search-proxy",
+  "version": "1.0.0",
+  "description": "Lightweight proxy for YouTube-style search via Invidious/Piped with caching",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^6.11.2",
+    "lru-cache": "^10.2.2"
+  }
+}

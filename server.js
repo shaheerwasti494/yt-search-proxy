@@ -10,25 +10,21 @@
 const express = require("express");
 const cors = require("cors");
 const rateLimit = require("express-rate-limit");
-const LRU = require("lru-cache");
+const { LRUCache } = require("lru-cache"); // <-- v10+
 
 const app = express();
 
-// --- Config (env or defaults) ---
 const PORT = process.env.PORT || 3000;
 const INVIDIOUS_BASE = process.env.INVIDIOUS_BASE || "https://yewtu.be";
 const PIPED_BASE     = process.env.PIPED_BASE     || "https://pipedapi.kavin.rocks";
-const CACHE_TTL_S    = Number(process.env.CACHE_TTL_S || 600); // 10m
-const CACHE_MAX      = Number(process.env.CACHE_MAX || 2000);  // keys
+const CACHE_TTL_S    = Number(process.env.CACHE_TTL_S || 600);
+const CACHE_MAX      = Number(process.env.CACHE_MAX || 2000);
 
-// --- Middlewares ---
 app.set("trust proxy", 1);
 app.use(cors());
-app.use(rateLimit({ windowMs: 60_000, max: 120 })); // 120 req/min/IP
-app.get("/healthz", (_, res) => res.json({ ok: true }));
+app.use(rateLimit({ windowMs: 60_000, max: 120 }));
 
-// --- Simple response cache (normalized JSON by URL) ---
-const respCache = new LRU({ max: CACHE_MAX, ttl: CACHE_TTL_S * 1000 });
+const respCache = new LRUCache({ max: CACHE_MAX, ttl: CACHE_TTL_S * 1000 });
 
 // Utility to respond JSON + cache
 function sendJson(res, key, payload, status = 200) {
